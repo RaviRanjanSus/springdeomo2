@@ -1,4 +1,8 @@
-FROM openjdk:17
+FROM maven:3.8.5-openjdk-17 as build
+COPY . .
+RUN mvn clean package -DskipTests
+
+FROM Openjdk:17.0.1-jdk-slim
+COPY --from=build /target/spring-boot-docker-0.0.1-SNAPSHOT.jar demo.jar
 EXPOSE 8080
-ADD  target/spring-boot-docker.jar spring-boot-docker.jar
-ENTRYPOINT [ "java","-jar","/spring-boot-docker.jar" ]
+ENTRYPOINT [ "java","-jar","/demo.jar" ]
